@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { Console } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

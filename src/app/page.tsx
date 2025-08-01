@@ -1,4 +1,5 @@
 import { FileJson, Code, Cloud, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SignInButton } from "@clerk/nextjs";
 

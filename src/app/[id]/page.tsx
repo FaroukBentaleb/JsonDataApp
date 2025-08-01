@@ -12,7 +12,7 @@ interface SharedJsonProps {
   };
 }
 export default function SharedJson({ params }: SharedJsonProps) {
-  const { id } = useParams();
+  const { id } = params;
   const [jsonData, setJsonData] = useState<JsonData>();
   const [loading, setLoading] = useState<boolean>(true);
 

@@ -1,29 +1,29 @@
+// src/app/[id]/page.tsx
+
 'use client';
 
+import { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
-import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
 
-export default function Page({
-  params
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
+interface ViewerProps {
+  id: string;
+}
+
+function JsonViewer({ id }: ViewerProps) {
   const [jsonData, setJsonData] = useState<JsonData>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`/api/json/${id}`);
         const data = await response.json();
-
         setJsonData(data);
-        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+      } finally {
         setLoading(false);
       }
     };
@@ -31,9 +31,7 @@ export default function Page({
     fetchData();
   }, [id]);
 
-  if (loading) {
-    return <div className='mt-8'>loading...</div>;
-  }
+  if (loading) return <div className='mt-8'>loading...</div>;
 
   return (
     <div className='mt-8 space-y-4'>
@@ -47,4 +45,9 @@ export default function Page({
       />
     </div>
   );
+}
+
+// Actual Page component expected by Next.js
+export default function Page({ params }: { params: { id: string } }) {
+  return <JsonViewer id={params.id} />;
 }

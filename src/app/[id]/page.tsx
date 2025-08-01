@@ -5,12 +5,11 @@ import { json } from '@codemirror/lang-json';
 import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
 
-interface SharedJsonProps {
-  params: {
-    id: string;
-  };
-}
-export default function SharedJson({ params }: SharedJsonProps) {
+export default function Page({
+  params
+}: {
+  params: { id: string };
+}) {
   const { id } = params;
   const [jsonData, setJsonData] = useState<JsonData>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,6 +34,7 @@ export default function SharedJson({ params }: SharedJsonProps) {
   if (loading) {
     return <div className='mt-8'>loading...</div>;
   }
+
   return (
     <div className='mt-8 space-y-4'>
       <h1 className='text-2xl underline font-bold'>{jsonData?.name}</h1>

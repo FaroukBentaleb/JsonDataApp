@@ -6,5 +6,9 @@
   package = "@netlify/plugin-nextjs"
 
 [functions]
+  # Remove the invalid timeout setting or use correct syntax
   node_bundler = "esbuild"
-  timeout = 10 # Seconds
+  
+  # If you need timeout configuration, use this format:
+  [functions.settings]
+    timeout = 10 # seconds

@@ -19,7 +19,7 @@ export default function SharedJson({ params }: SharedJsonProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(/api/json/${id});
+        const response = await fetch(`/api/json/${id}`);
         const data = await response.json();
 
         setJsonData(data);

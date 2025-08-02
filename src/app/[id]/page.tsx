@@ -2,22 +2,37 @@ import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { JsonData } from '@prisma/client';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+// Correct type for Next.js 14+ App Router
+type PageProps = {
+  params: { id: string };
+  searchParams?: Record<string, string | string[] | undefined>;
+};
 
 async function getJsonData(id: string): Promise<JsonData> {
-  const response = await fetch(`http://localhost:3000/api/json/${id}`);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.endsWith('/')
+    ? process.env.NEXT_PUBLIC_BASE_URL.slice(0, -1)
+    : process.env.NEXT_PUBLIC_BASE_URL;
+  
+  const response = await fetch(`${baseUrl}/api/json/${id}`, {
+    cache: 'no-store' // Important for dynamic data
+  });
+  
   if (!response.ok) {
-    throw new Error('Failed to fetch data');
+    throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
+  
   return response.json();
 }
 
 export default async function SharedJson({ params }: PageProps) {
-  const jsonData = await getJsonData(params.id);
+  let jsonData: JsonData;
+  
+  try {
+    jsonData = await getJsonData(params.id);
+  } catch (error) {
+    console.error('Fetch error:', error);
+    return <div className="text-red-500">Error loading JSON data</div>;
+  }
 
   return (
     <div className='mt-8 space-y-4'>

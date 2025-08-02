@@ -2,19 +2,20 @@ import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { JsonData } from '@prisma/client';
 
-// Correct type for Next.js 14+ App Router
-type PageProps = {
+// This export marks the page as dynamic (fixes the type issue)
+export const dynamic = 'force-dynamic';
+
+interface PageProps {
   params: { id: string };
-  searchParams?: Record<string, string | string[] | undefined>;
-};
+}
 
 async function getJsonData(id: string): Promise<JsonData> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.endsWith('/')
     ? process.env.NEXT_PUBLIC_BASE_URL.slice(0, -1)
-    : process.env.NEXT_PUBLIC_BASE_URL;
+    : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   const response = await fetch(`${baseUrl}/api/json/${id}`, {
-    cache: 'no-store' // Important for dynamic data
+    cache: 'no-store'
   });
   
   if (!response.ok) {

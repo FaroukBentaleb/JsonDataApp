@@ -1,17 +1,17 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
-    serverActions: true,
-    optimizePackageImports: ['@prisma/client'],
+    serverActions: {}, // Changed from boolean to empty object
+    optimizePackageImports: ['@prisma/client', '@prisma/extension-accelerate'],
+  },
+  typescript: {
+    ignoreBuildErrors: true, // Temporary during fixes
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-}
+};
 
 export default nextConfig;

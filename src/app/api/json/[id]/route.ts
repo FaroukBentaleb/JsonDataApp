@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 type Context = {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, context: Context) {
   const { id } = context.params;
 
   try {
-    const json = await prisma.jsonData.findUnique({
+    const json = await db.jsonData.findUnique({
       where: { id },
       select: {
         id: true,

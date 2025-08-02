@@ -1,6 +1,5 @@
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Console } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,7 +12,7 @@ export async function POST(request: NextRequest) {
   console.log('data: ',name,' | ',content);
 
   try {
-    const json = await prisma.jsonData.create({
+    const json = await db.jsonData.create({
       data: {
         name,
         content,
@@ -34,7 +33,7 @@ export async function GET() {
   }
 
   try {
-    const json = await prisma.jsonData.findMany({
+    const json = await db.jsonData.findMany({
       where: { userId},
       orderBy: { createdAt: 'desc'},
       select: {

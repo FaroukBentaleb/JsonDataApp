@@ -7,31 +7,35 @@ import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
 
 interface SharedJsonProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 export default function SharedJson({ params }: SharedJsonProps) {
-  const { id } = React.use(params);
+  const { id } = params;
   const [jsonData, setJsonData] = useState<JsonData>();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/json/${id}`);
-        const data = await response.json();
+  const controller = new AbortController();
 
-        setJsonData(data);
-        setLoading(false);
-      } catch (error) {
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`/api/json/${id}`, { signal: controller.signal });
+      const data = await response.json();
+      setJsonData(data);
+    } catch (error) {
         console.error('Failed to fetch data:', error);
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [id]);
+  fetchData();
+
+  return () => controller.abort(); // Cleanup
+}, [id]);
+
 
   if (loading) {
     return <div className='mt-8'>loading...</div>;

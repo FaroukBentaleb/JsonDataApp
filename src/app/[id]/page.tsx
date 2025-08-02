@@ -1,50 +1,29 @@
-'use client';
-
-import React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
-import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
 
-interface SharedJsonProps {
+interface PageProps {
   params: {
     id: string;
   };
 }
-export default function SharedJson({ params }: SharedJsonProps) {
-  const  id  = params.id;
-  const [jsonData, setJsonData] = useState<JsonData>();
-  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-  const controller = new AbortController();
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`/api/json/${id}`, { signal: controller.signal });
-      const data = await response.json();
-      setJsonData(data);
-    } catch (error) {
-        console.error('Failed to fetch data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-
-  return () => controller.abort(); // Cleanup
-}, [id]);
-
-
-  if (loading) {
-    return <div className='mt-8'>loading...</div>;
+async function getJsonData(id: string): Promise<JsonData> {
+  const response = await fetch(`http://localhost:3000/api/json/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
   }
+  return response.json();
+}
+
+export default async function SharedJson({ params }: PageProps) {
+  const jsonData = await getJsonData(params.id);
+
   return (
     <div className='mt-8 space-y-4'>
-      <h1 className='text-2xl underline font-bold'>{jsonData?.name}</h1>
+      <h1 className='text-2xl underline font-bold'>{jsonData.name}</h1>
       <CodeMirror
-        value={jsonData?.content || ''}
+        value={jsonData.content || ''}
         height='400px'
         extensions={[json()]}
         editable={false}

@@ -6,13 +6,8 @@ import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
 import { useParams } from 'next/navigation';
 
-interface SharedJsonProps {
-  params: {
-    id: string;
-  };
-}
-export default function SharedJson({ params }: SharedJsonProps) {
-  const { id } = useParams();
+export default function SharedJson() {
+  const { id } = useParams<{ id: string }>();
   const [jsonData, setJsonData] = useState<JsonData>();
   const [loading, setLoading] = useState<boolean>(true);
 

@@ -1,25 +1,25 @@
 'use client';
 
+import React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
-import { useParams } from 'next/navigation';
 
 interface SharedJsonProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 export default function SharedJson({ params }: SharedJsonProps) {
-  const { id } = useParams();
+  const { id } = React.use(params);
   const [jsonData, setJsonData] = useState<JsonData>();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/json/${id}`);
+        const response = await fetch(/api/json/${id});
         const data = await response.json();
 
         setJsonData(data);

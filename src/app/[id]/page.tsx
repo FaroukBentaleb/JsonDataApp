@@ -1,45 +1,46 @@
+'use client';
+
 import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
+import { useEffect, useState } from 'react';
 import { JsonData } from '@prisma/client';
+import { useParams } from 'next/navigation';
 
-// This export marks the page as dynamic (fixes the type issue)
-export const dynamic = 'force-dynamic';
-
-interface PageProps {
-  params: { id: string };
+interface SharedJsonProps {
+  params: {
+    id: string;
+  };
 }
+export default function SharedJson({ params }: SharedJsonProps) {
+  const { id } = useParams();
+  const [jsonData, setJsonData] = useState<JsonData>();
+  const [loading, setLoading] = useState<boolean>(true);
 
-async function getJsonData(id: string): Promise<JsonData> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.endsWith('/')
-    ? process.env.NEXT_PUBLIC_BASE_URL.slice(0, -1)
-    : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
-  const response = await fetch(`${baseUrl}/api/json/${id}`, {
-    cache: 'no-store'
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data: ${response.statusText}`);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/json/${id}`);
+        const data = await response.json();
+
+        setJsonData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return <div className='mt-8'>loading...</div>;
   }
-  
-  return response.json();
-}
-
-export default async function SharedJson({ params }: PageProps) {
-  let jsonData: JsonData;
-  
-  try {
-    jsonData = await getJsonData(params.id);
-  } catch (error) {
-    console.error('Fetch error:', error);
-    return <div className="text-red-500">Error loading JSON data</div>;
-  }
-
   return (
     <div className='mt-8 space-y-4'>
-      <h1 className='text-2xl underline font-bold'>{jsonData.name}</h1>
+      <h1 className='text-2xl underline font-bold'>{jsonData?.name}</h1>
       <CodeMirror
-        value={jsonData.content || ''}
+        value={jsonData?.content || ''}
         height='400px'
         extensions={[json()]}
         editable={false}

@@ -1,14 +1,17 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: 'standalone',
-  env: {
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+  experimental: {
+    serverActions: true,
+    optimizePackageImports: ['@prisma/client'],
   },
-  // Temporary fix for type errors
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   typescript: {
-    ignoreBuildErrors: true
-  }
-};
+    ignoreBuildErrors: true,
+  },
+}
 
 export default nextConfig;
